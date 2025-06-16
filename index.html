@@ -8,6 +8,73 @@
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel"> //così posso scrivere JSX
+        const { useState } = React
+        function Modal({
+            title, 
+            content, 
+            show = false, 
+            onClose = () => {},
+            onConfirm = () => {}
+        }){
+            return show && ReactDOM.createPortal(
+                <div className="modal-container">
+                    <div className="modal">
+                        <h2>{title}</h2>
+                        {content}
+                        <button onClick={onClose}>Annulla</button>
+                        <button onClick={onConfirm}>Conferma</button>
+                    </div>
+                </div>,
+                document.body
+            )
+        }
+        function ListaAnimali() {
+            const animalsChoices = ["Cane", "Gatto", "Pappagallo", "Cavallo", "Panda"];
+
+            const [animals, setAnimals] = useState([]);
+            const [showModal, setShowModal] = useState(false);
+            const [animalName, setAnimalName] = useState("");
+
+            const addAnimal = () => {
+                if(!animalName) return;
+                setAnimals(curr => [...curr, animalName]);
+                setAnimalName("");
+                setShowModal(false);
+                }
+            return (
+                <>
+                    <button onClick={() => setShowModal(true)}>Aggiungi animale</button>
+                    <details>
+                        <summary>Animali</summary>
+                        <ul>
+                            {animals.map((animal, index) => (<li key={index}>{animal}</li>))}
+                        </ul>
+                    </details>
+                    <Modal
+                        show={showModal}
+                        onClose={() => setShowModal(false)}
+                        onConfirm={addAnimal}
+                        title="Aggiungi animale"
+                        content={
+                            <input
+                                type="text"
+                                value={animalName}
+                                onChange={e => setAnimalName(e.target.value)}
+                            />
+                        }
+                    />
+                </>
+            )
+        }
+        
+        </script>
+        <script type="text/babel">
+            const { createRoot } = ReactDOM;
+            const listaAnimali = document.querySelector(".lista-animali")
+            const root = createRoot(listaAnimali)
+            root.render(<ListaAnimali/>) //il componente viene montato nel div con la classe "lista-animali"
+        </script>
 </head>
 <body>
     <header>
@@ -17,32 +84,10 @@
         <figure>
             <img src="https://picsum.photos/400/300" alt="Immagine Casuale">
         </figure>
-        <div class="lista-animali"></div>
+        <div class="lista-animali">
     </main>
-      <footer>
+    <footer>
       <p>Creato con amore da... un collega sbadato! 🐾</p>
     </footer>
-
-        
-        <script type="text/babel"> //così posso scrivere JSX
-            const animals = ["Cane", "Gatto", "Coniglio", "Pappagallo", "Pesce rosso"]
-            
-            function ListaAnimali() {
-                return (
-                    <details>
-                        <h1>Animali</h1>
-                        <ul>
-                            {animals.map((animal, index) => <li key={index}>{animal}</li>)}
-                        </ul>
-                    </details>
-                )
-
-                const rootElement = document.querySelector(".lista-animali")
-                const root = ReactDom.createRoot(rootElement)
-                root.render(<ListaAnimali/>) //il componente viene montato nel div con la classe "lista-animali"
-            }
-        </script>
-
-
   </body>
 </html>
